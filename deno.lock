@@ -1,6 +1,8 @@
 {
   "version": "4",
   "specifiers": {
+    "npm:@jsr/sigmasd__fs-with-x-runtime-walk@^0.0.9": "0.0.9",
+    "npm:@jsr/std__path@^1.0.8": "1.0.8",
     "npm:@types/node@^16.11.6": "16.18.126",
     "npm:@typescript-eslint/eslint-plugin@5.29.0": "5.29.0_@typescript-eslint+parser@5.29.0__eslint@8.57.1__typescript@4.7.4_eslint@8.57.1_typescript@4.7.4",
     "npm:@typescript-eslint/parser@5.29.0": "5.29.0_eslint@8.57.1_typescript@4.7.4",
@@ -131,6 +133,15 @@
     },
     "@humanwhocodes/object-schema@2.0.3": {
       "integrity": "sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA=="
+    },
+    "@jsr/sigmasd__fs-with-x-runtime-walk@0.0.9": {
+      "integrity": "sha512-XE6C6qQL7L2vEsw8mwayYFKri1R0pCKMK8fenMZEo9VatzRQcHXmRVZjdBnSx5Qfj5IUIZS71Ua+uMBt7+JimQ==",
+      "dependencies": [
+        "@jsr/std__path"
+      ]
+    },
+    "@jsr/std__path@1.0.8": {
+      "integrity": "sha512-eNBGlh/8ZVkMxtFH4bwIzlAeKoHYk5in4wrBZhi20zMdOiuX4QozP4+19mIXBT2lzHDjhuVLyECbhFeR304iDg=="
     },
     "@marijn/find-cluster-break@1.0.2": {
       "integrity": "sha512-l0h88YhZFyKdXIFNfSWpyjStDjGHwZ/U7iobcK1cQQD8sejsONdQtTVU+1wVN1PBw40PiiHB1vA5S7VTfQiP9g=="
@@ -878,6 +889,8 @@
   "workspace": {
     "packageJson": {
       "dependencies": [
+        "npm:@jsr/sigmasd__fs-with-x-runtime-walk@^0.0.9",
+        "npm:@jsr/std__path@^1.0.8",
         "npm:@types/node@^16.11.6",
         "npm:@typescript-eslint/eslint-plugin@5.29.0",
         "npm:@typescript-eslint/parser@5.29.0",
