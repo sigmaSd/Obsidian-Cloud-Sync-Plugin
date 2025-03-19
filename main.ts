@@ -8,7 +8,7 @@ import {
 	Setting,
 } from "obsidian";
 
-import { exec, execSync } from "child_process";
+import { ChildProcess, exec, execSync } from "child_process";
 import fs from "fs";
 
 interface SyncPluginSettings {
@@ -69,8 +69,7 @@ class SyncModal extends Modal {
 	settings: SyncPluginSettings;
 	progressTextEl!: HTMLElement;
 	isSyncing: boolean = false;
-	// deno-lint-ignore no-explicit-any
-	syncProcess: any = null;
+	syncProcess: ChildProcess | null = null;
 	startLocalToRemoteButton!: HTMLButtonElement;
 	startRemoteToLocalButton!: HTMLButtonElement;
 	startButton!: HTMLButtonElement; // Bi-directional
