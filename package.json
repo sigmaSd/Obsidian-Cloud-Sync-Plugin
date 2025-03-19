@@ -15,6 +15,8 @@
 	"author": "sigmasd",
 	"license": "MIT",
 	"devDependencies": {
+		"@sigmasd/fs": "npm:@jsr/sigmasd__fs-with-x-runtime-walk@^0.0.9",
+		"@std/path": "npm:@jsr/std__path@^1.0.8",
 		"@types/node": "^16.11.6",
 		"@typescript-eslint/eslint-plugin": "5.29.0",
 		"@typescript-eslint/parser": "5.29.0",

@@ -8,7 +8,11 @@ import {
 	Setting,
 } from "obsidian";
 
-import { exec } from "child_process";
+import { exec, execSync } from "child_process";
+import { walkSync } from "@sigmasd/fs";
+import os from "os";
+import path from "path";
+import fs from "fs";
 
 interface SyncPluginSettings {
 	syncSource: string;
@@ -165,16 +169,26 @@ class SyncModal extends Modal {
 		this.cancelButton.setText("Cancel Sync");
 
 		const command =
-			`flatpak-spawn --host rclone bisync ${this.settings.syncSource} ${this.settings.syncDestination} --exclude ".obsidian/plugins/**" --progress`;
+			`flatpak-spawn --host rclone bisync ${this.settings.syncSource} ${this.settings.syncDestination} --exclude ".obsidian/" --progress`;
 
 		try {
-			this.syncProcess = exec(command, (error, _stdout, stderr) => {
+			this.syncProcess = exec(command, (error, stdout, stderr) => {
 				this.isSyncing = false;
 
 				// Re-enable start button and revert cancel button text
 				this.startButton.disabled = false;
 				this.startButton.setText("Start Sync");
 				this.cancelButton.setText("Close");
+
+				// rename conflict files if they exist
+				const conflictPaths = stdout
+					.matchAll(/NOTICE: - Path.*- (.*)/g)
+					.map((match) => match[1]);
+				conflictPaths.forEach((path) =>
+					execSync(
+						`flatpak-spawn --host rclone moveto ${path} ${path}.md`,
+					)
+				);
 
 				if (error) {
 					this.appendToProgress(`Error: ${error.message}`);
@@ -296,4 +310,11 @@ class SyncSettingTab extends PluginSettingTab {
 				".obsidian/plugins/** - Plugins are excluded to avoid conflicts",
 		});
 	}
+}
+
+function expandHome(p: string) {
+	if (p.startsWith("~")) {
+		return path.join(os.homedir(), p.slice(1));
+	}
+	return p;
 }
