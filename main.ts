@@ -8,11 +8,9 @@ import {
 	Setting,
 } from "obsidian";
 
-import { exec, execSync } from "child_process";
-import { walkSync } from "@sigmasd/fs";
-import os from "os";
-import path from "path";
+import { exec } from "child_process";
 import fs from "fs";
+import assert from "assert";
 
 interface SyncPluginSettings {
 	syncSource: string;
@@ -169,7 +167,7 @@ class SyncModal extends Modal {
 		this.cancelButton.setText("Cancel Sync");
 
 		const command =
-			`flatpak-spawn --host rclone bisync ${this.settings.syncSource} ${this.settings.syncDestination} --exclude ".obsidian/" --progress`;
+			`flatpak-spawn --host rclone bisync ${this.settings.syncSource} ${this.settings.syncDestination} --exclude ".obsidian/" --exclude=".git/" --progress`;
 
 		try {
 			this.syncProcess = exec(command, (error, stdout, stderr) => {
@@ -180,15 +178,29 @@ class SyncModal extends Modal {
 				this.startButton.setText("Start Sync");
 				this.cancelButton.setText("Close");
 
-				// rename conflict files if they exist
-				const conflictPaths = stdout
-					.matchAll(/NOTICE: - Path.*- (.*)/g)
-					.map((match) => match[1]);
-				conflictPaths.forEach((path) =>
-					execSync(
-						`flatpak-spawn --host rclone moveto ${path} ${path}.md`,
-					)
-				);
+				// handle conflicts
+				if (/NOTICE: - Path1/.test(stdout)) {
+					const firstPath = stdout.match(
+						/Renaming Path1 copy.*- (.*)/,
+					)?.at(1);
+					const secondPath = stdout.match(
+						/Queue copy to Path1.*- (.*)/,
+					)?.at(1);
+					assert(firstPath);
+					assert(secondPath);
+					const firstPathWithoutConflict = `${
+						firstPath.replace(/\.conflict.*$/, "")
+					}`;
+					fs.renameSync(
+						firstPath,
+						firstPathWithoutConflict,
+					);
+
+					this.appendToProgress(`Opening merge editor...`);
+					exec(
+						`flatpak-spawn --host meld ${firstPathWithoutConflict} ${secondPath}`,
+					);
+				}
 
 				if (error) {
 					this.appendToProgress(`Error: ${error.message}`);
@@ -310,11 +322,4 @@ class SyncSettingTab extends PluginSettingTab {
 				".obsidian/plugins/** - Plugins are excluded to avoid conflicts",
 		});
 	}
-}
-
-function expandHome(p: string) {
-	if (p.startsWith("~")) {
-		return path.join(os.homedir(), p.slice(1));
-	}
-	return p;
 }
