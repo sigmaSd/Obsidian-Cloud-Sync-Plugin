@@ -2,6 +2,10 @@
 
 This plugin helps you synchronize your Obsidian vault with cloud storage using Rclone's bisync feature. It provides a simple interface to keep your notes in sync across different devices.
 
+## Why Not Just Edit Directly in Cloud Storage?
+
+While it's tempting to directly edit files within a cloud-synced folder (like Google Drive), this often leads to significant performance issues within Obsidian.  Opening, editing, and even navigating can become sluggish. This plugin allows you to work locally with optimal speed and sync only when needed.
+
 ## Features
 
 - Synchronize your Obsidian vault with cloud storage
